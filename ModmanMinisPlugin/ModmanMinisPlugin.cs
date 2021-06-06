@@ -13,7 +13,7 @@ using UnityEngine;
 namespace ModmanMinis
 {
 
-    [BepInPlugin(Guid, "ImageToPlane", Version)]
+    [BepInPlugin(Guid, "ModmanMinisPlugin", Version)]
     [BepInDependency(CustomMiniPlugin.Guid)]
     public class ModmanMinisPlugin: BaseUnityPlugin
     {
@@ -24,15 +24,17 @@ namespace ModmanMinis
         // Configuration
         private ConfigEntry<KeyboardShortcut> triggerKeyBasic { get; set; }
 
-        // Speech font name
-        private bool properInitialization = false;
+        private AssetsList list;
+        private static string dir = UnityEngine.Application.dataPath.Substring(0, UnityEngine.Application.dataPath.LastIndexOf("/")) + "/TaleSpire_CustomData/";
 
         /// <summary>
         /// Awake plugin
         /// </summary>
         void Awake()
         {
-            Debug.Log("HolloFoxes Modman Minis Plugin Active.");
+            Debug.Log("HolloFox's Modman Minis Plugin is Active.");
+
+            triggerKeyBasic = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
 
             var bundles = GetAssetPaths();
             if (bundles.Count() > 0) Debug.Log("Plugin Found Minis:");
@@ -41,6 +43,7 @@ namespace ModmanMinis
                 Debug.Log($"- {path.FullName}");
             }
 
+            
         }
 
         private bool isBoardLoaded()
@@ -57,10 +60,15 @@ namespace ModmanMinis
         {
             if (isBoardLoaded())
             {
-                if (properInitialization && Extensions.StrictKeyCheck(triggerKeyBasic.Value))
+                if (Extensions.StrictKeyCheck(triggerKeyBasic.Value))
                 {
-                    
+                    Debug.Log("called");
+                    if (list == null || list.IsDisposed) list = new AssetsList();
+                    list.Show();
                 }
+                CustomMiniPlugin.GetStatHander().CheckStatRequests(
+                    
+                    );
             }
         }
 
