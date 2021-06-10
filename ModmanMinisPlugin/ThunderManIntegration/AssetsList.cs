@@ -35,11 +35,16 @@ namespace ModmanMinis
             var author = modFolder.Substring(0,modFolder.IndexOf("-"));
             var mod_name = obj.name;
             var version = obj.version_number;
+            
             model.Ror2mm = $"ror2mm://v1/install/talespire.thunderstore.io/{author}/{mod_name}/{version}/";
+            /* GET	https://talespire.thunderstore.io/api/experimental/package/{Author}/{PluginName}/ => 
+                latest.version_number
+            */
+            // var message = $"<size=0>{mod_name}/{author}</size>{model.MiniName}";
 
-            var message = JsonConvert.SerializeObject(model);
-            Debug.Log(message);
-            CreatureManager.SetCreatureName(LocalClient.SelectedCreatureId, $"Make me a: {message}");
+            StatMessaging.SetInfo(LocalClient.SelectedCreatureId, ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
+
+            // CreatureManager.SetCreatureName(LocalClient.SelectedCreatureId, $"Make me a: {message}");
         }
 
         public List<LoadAsset> paths = new List<LoadAsset>();
@@ -50,7 +55,10 @@ namespace ModmanMinis
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
 
-            var bundles = ModmanMinisPlugin.GetAssetPaths();
+            var bundles = ThunderManPlugin.GetAssetPaths();
+
+            Dictionary<string, LoadAsset> assets = new Dictionary<string, LoadAsset>();
+
             foreach (var path in bundles)
             {
                 var relative = path.FullName.Replace(pluginsFolder+"\\", "");
@@ -62,9 +70,12 @@ namespace ModmanMinis
                     MiniName = path.Name,
                     transformName = relative
                 };
+                assets.Add(path.Name,asset);
                 paths.Add(asset);
                 listBox1.Items.Add(path.Name);
             }
+
+            // List<String> paths = assets.Keys.ToList().or;
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)

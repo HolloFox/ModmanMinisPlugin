@@ -117,6 +117,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TaleSpire\TaleSpire_Data\Managed\ShapesRuntime.dll</HintPath>
     </Reference>
+    <Reference Include="StatMessaging">
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\TaleSpire\profiles\CMPDev\BepInEx\plugins\LordAshes-StatMessagingPlugin\StatMessaging.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -393,27 +396,47 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetsList.cs">
+    <Compile Include="CustomMinisPlugin\CharWordReader.cs" />
+    <Compile Include="CustomMinisPlugin\IStatHandler.cs" />
+    <Compile Include="CustomMinisPlugin\MTLLoader.cs" />
+    <Compile Include="CustomMinisPlugin\OBJLoader.cs" />
+    <Compile Include="CustomMinisPlugin\OBJLoaderHelper.cs" />
+    <Compile Include="CustomMinisPlugin\OBJObjectBuilder.cs" />
+    <Compile Include="CustomMinisPlugin\Program.cs" />
+    <Compile Include="CustomMinisPlugin\ShaderDetector.cs" />
+    <Compile Include="CustomMinisPlugin\StateDetection.cs" />
+    <Compile Include="CustomMinisPlugin\StatHandler.cs" />
+    <Compile Include="CustomMinisPlugin\StringExtensions.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\BinaryExtensions.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\BMPLoader.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\ColorExtensions.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\DDSLoader.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\ImageLoader.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\ImageLoaderHelper.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\ImageUtils.cs" />
+    <Compile Include="CustomMinisPlugin\TextureLoader\TGALoader.cs" />
+    <Compile Include="ThunderManIntegration\AssetsList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AssetsList.Designer.cs">
+    <Compile Include="ThunderManIntegration\AssetsList.Designer.cs">
       <DependentUpon>AssetsList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="LoadAsset.cs" />
-    <Compile Include="manifest.cs" />
-    <Compile Include="ModdingUtil.cs" />
-    <Compile Include="ModmanMinisPlugin.cs" />
-    <Compile Include="modmanStatHandler.cs" />
+    <Compile Include="ThunderManIntegration\Extensions.cs" />
+    <Compile Include="ThunderManIntegration\LoadAsset.cs" />
+    <Compile Include="ThunderManIntegration\manifest.cs" />
+    <Compile Include="ThunderManIntegration\ModdingUtil.cs" />
+    <Compile Include="ThunderManIntegration\ThunderManPlugin.cs" />
+    <Compile Include="ThunderManIntegration\modmanStatHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AssetsList.resx">
+    <EmbeddedResource Include="ThunderManIntegration\AssetsList.resx">
       <DependentUpon>AssetsList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

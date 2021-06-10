@@ -13,19 +13,24 @@ using UnityEngine;
 namespace ModmanMinis
 {
 
-    [BepInPlugin(Guid, "ModmanMinisPlugin", Version)]
+    [BepInPlugin(Guid, "ThunderManPlugin", Version)]
     [BepInDependency(CustomMiniPlugin.Guid)]
-    public class ModmanMinisPlugin: BaseUnityPlugin
+    [BepInDependency(StatMessaging.Guid)]
+    public class ThunderManPlugin: BaseUnityPlugin
     {
         // constants
-        private const string Guid = "org.hollofox.plugins.ModmanMinisPlugin";
-        private const string Version = "1.0.0.0";
+        public const string Guid = "org.hollofox.plugins.ThunderManPlugin";
+        private const string Version = "0.9.0.0";
 
         // Configuration
         private ConfigEntry<KeyboardShortcut> triggerKeyBasic { get; set; }
 
+        // 
         private AssetsList list;
         private static string dir = UnityEngine.Application.dataPath.Substring(0, UnityEngine.Application.dataPath.LastIndexOf("/")) + "/TaleSpire_CustomData/";
+
+        // My StatHandler
+
 
         /// <summary>
         /// Awake plugin
@@ -42,8 +47,6 @@ namespace ModmanMinis
             {
                 Debug.Log($"- {path.FullName}");
             }
-
-            
         }
 
         private bool isBoardLoaded()
@@ -58,6 +61,7 @@ namespace ModmanMinis
         /// </summary>
         void Update()
         {
+            StatMessaging.Check(Callback);
             if (isBoardLoaded())
             {
                 if (Extensions.StrictKeyCheck(triggerKeyBasic.Value))
@@ -66,10 +70,20 @@ namespace ModmanMinis
                     if (list == null || list.IsDisposed) list = new AssetsList();
                     list.Show();
                 }
-                CustomMiniPlugin.GetStatHander().CheckStatRequests(
-                    
-                    );
+
+                // var requestHandler = CustomMiniPlugin.GetRequestHander();
+                
             }
+        }
+
+        public void Callback(StatMessaging.Change[] name)
+        {
+            Debug.Log("callback:");
+            foreach (var change in name)
+            {
+                Debug.Log(JsonConvert.SerializeObject(change));
+            }
+            
         }
 
         public static ParallelQuery<FileInfo> GetAssetPaths()
