@@ -13,14 +13,14 @@ using UnityEngine;
 namespace ModmanMinis
 {
 
-    [BepInPlugin(Guid, "ThunderManPlugin", Version)]
+    [BepInPlugin(Guid, "ThunderMan Plugin", Version)]
     [BepInDependency("org.lordashes.plugins.custommini")]
     [BepInDependency(StatMessaging.Guid)]
     public class ThunderManPlugin: BaseUnityPlugin
     {
         // constants
         public const string Guid = "org.hollofox.plugins.ThunderManPlugin";
-        private const string Version = "0.9.0.0";
+        private const string Version = "1.0.0.0";
 
         // Configuration
         private ConfigEntry<KeyboardShortcut>[] triggerKeyBasic = new ConfigEntry<KeyboardShortcut>[2];
@@ -41,6 +41,8 @@ namespace ModmanMinis
 
             triggerKeyBasic[0] = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
             triggerKeyBasic[1] = Config.Bind("Hotkeys", "Apply Aura", new KeyboardShortcut(KeyCode.Alpha2, KeyCode.LeftControl));
+
+            ModdingTales.ModdingUtils.Initialize(this, Logger);
 
             StatMessaging.Subscribe(Guid, Request);
         }
