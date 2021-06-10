@@ -50,12 +50,12 @@ namespace LordAshes
                     // If the change is not for the CustomMiniPlugin key then ignore it
                     if (asset != null)
                     {
-                        if (change.key != Guid && ChangesActions.ContainsKey(change.key))
+                        if (change.key != "org.lordashes.plugins.custommini" && ChangesActions.ContainsKey(change.key))
                         {
                             ChangesActions[change.key](asset, change.value);
                         }
                         // Process the request (since remove has a blank value this will trigger mesh removal)
-                        else if (change.key == Guid)
+                        else if (change.key == "org.lordashes.plugins.custommini")
                         {
                             LoadCustomContent(asset, dir + "Minis/" + change.value + "/" + change.value);
                         }

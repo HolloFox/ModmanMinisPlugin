@@ -79,6 +79,9 @@
     <Reference Include="Bouncyrock.TaleSpire.Runtime">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TaleSpire\TaleSpire_Data\Managed\Bouncyrock.TaleSpire.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="CustomMiniPlugin">
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\TaleSpire\profiles\CMPDev\BepInEx\plugins\LordAshes-CustomMiniPlugin\CustomMiniPlugin.dll</HintPath>
+    </Reference>
     <Reference Include="HarmonyXInterop">
       <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\TaleSpire\profiles\Default\BepInEx\core\HarmonyXInterop.dll</HintPath>
     </Reference>
@@ -393,24 +396,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomMinisPlugin\CharWordReader.cs" />
-    <Compile Include="CustomMinisPlugin\CustomMiniPlugin.cs" />
-    <Compile Include="CustomMinisPlugin\MTLLoader.cs" />
-    <Compile Include="CustomMinisPlugin\OBJLoader.cs" />
-    <Compile Include="CustomMinisPlugin\OBJLoaderHelper.cs" />
-    <Compile Include="CustomMinisPlugin\OBJObjectBuilder.cs" />
     <Compile Include="CustomMinisPlugin\RequestHandler.cs" />
-    <Compile Include="CustomMinisPlugin\ShaderDetector.cs" />
-    <Compile Include="CustomMinisPlugin\StateDetection.cs" />
-    <Compile Include="CustomMinisPlugin\StringExtensions.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\BinaryExtensions.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\BMPLoader.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ColorExtensions.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\DDSLoader.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ImageLoader.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ImageLoaderHelper.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ImageUtils.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\TGALoader.cs" />
     <Compile Include="ThunderManIntegration\AssetsList.cs">
       <SubType>Form</SubType>
     </Compile>

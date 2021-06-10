@@ -14,7 +14,7 @@ namespace ModmanMinis
 {
 
     [BepInPlugin(Guid, "ThunderManPlugin", Version)]
-    [BepInDependency(CustomMiniPlugin.Guid)]
+    [BepInDependency("org.lordashes.plugins.custommini")]
     [BepInDependency(StatMessaging.Guid)]
     public class ThunderManPlugin: BaseUnityPlugin
     {
@@ -42,17 +42,21 @@ namespace ModmanMinis
             triggerKeyBasic[0] = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
             triggerKeyBasic[1] = Config.Bind("Hotkeys", "Apply Aura", new KeyboardShortcut(KeyCode.Alpha2, KeyCode.LeftControl));
 
-            /*foreach (var type in new []{"Minis", "Effects", "Props", "Tiles" })
-            {
-                var Bundles = GetAssetPaths(type);
-                if (Bundles.Any()) Debug.Log($"Plugin Found {type}:");
-                foreach (var path in Bundles)
-                {
-                    Debug.Log($"{type} - {path.FullName}");
-                }
-            }*/
+            StatMessaging.Subscribe(Guid, Request);
+        }
 
-            CustomMiniPlugin.RequestHandler.AppendChanges(Guid,ModmanStatHandler.LoadCustomContent);
+        public void Request(StatMessaging.Change[] changes)
+        {
+            // Process all changes
+            foreach (StatMessaging.Change change in changes)
+            {
+                // Find a reference to the indicated mini
+                CreaturePresenter.TryGetAsset(change.cid, out var asset);
+                if (asset != null)
+                {
+                    ModmanStatHandler.LoadCustomContent(asset, change.value);
+                }
+            }
         }
 
         private bool isBoardLoaded()
