@@ -12,31 +12,41 @@ using UnityEngine;
 
 namespace ModmanMinis
 {
-    public class ModmanStatHandler
+    public static class ModmanStatHandler
     {
-        public ModmanStatHandler(string guid, string path)
-        {
+
+        public static void LoadCustomContent(CreatureBoardAsset asset, string source)
+        { 
+            Debug.Log("Received ror2mm Message:");
+            Debug.Log(source);
+            var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
+            var data = JsonConvert.DeserializeObject<LoadAsset>(source);
+            Debug.Log($"data: {data}");
+            var folder = data.transformName.Substring(0, data.transformName.IndexOf("\\"));
+
+            if (Directory.Exists(pluginsFolder + "\\" + folder))
+            {
+                CustomMiniPlugin.RequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+            }
+            else
+            {
+                SystemMessage.SendSystemMessage("Download Asset",
+                    $"Would you like to download {data.MiniName} for TaleSpire?",
+                    $"Download {data.MiniName}",
+                    () =>
+                    {
+                        System.Diagnostics.Process.Start(data.Ror2mm).WaitForExit();
+                        CustomMiniPlugin.RequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+                    }, "Don't Download");
+            }
+
         }
-
-        // Plugin guid
-        private string guid;
-
-        // Directory for custom content
-        private string dir = "";
-
-        // Determines if transformation is in progress
-        private bool transformationInProgress = false;
-
-        // Config
-        private CustomAssetIndex customAssetIndex = new CustomAssetIndex();
-
-        // Transformations
-        private Dictionary<CreatureGuid, string> transformations = new Dictionary<CreatureGuid, string>();
 
         /// <summary>
         /// Method to detect character Stat3 requests 
         /// </summary>
-        public new void CheckStatRequests()
+        /*public void CheckStatRequests()
         {
             if (!transformationInProgress)
             {
@@ -97,171 +107,6 @@ namespace ModmanMinis
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Method to make character Stat3 requests
-        /// </summary>
-        /// <param name="asset">Asset making the request</param>
-        /// <param name="content">Name of the contents</param>
-        public void SetTransformationRequest(CreatureGuid cid, string content)
-        {
-            CreatureBoardAsset asset;
-            CreaturePresenter.TryGetAsset(cid, out asset);
-            string origName = asset.Creature.Name;
-            if (origName.IndexOf(":") > -1) { origName = origName.Substring(0, origName.IndexOf(":")).Trim(); }
-            Debug.Log("Setting creature '" + asset.Creature.Name + "' name (" + asset.Creature.CreatureId + ") to '" + origName + " : " + content + "'");
-            CreatureManager.SetCreatureName(cid, origName + " : " + content);
-        }
-
-        /// <summary>
-        /// Used to reset the transformation list so that all transformation will be re-applied
-        /// </summary>
-        public void Reset()
-        {
-            transformations.Clear();
-        }
-
-        /// <summary>
-        /// Method to sync the transformation mesh with the character's stealth mode setting
-        /// </summary>
-        public void SyncStealthMode()
-        {
-            foreach (CreatureBoardAsset asset in CreaturePresenter.AllCreatureAssets.ToArray())
-            {
-                if (transformations.ContainsKey(asset.Creature.CreatureId))
-                {
-                    GameObject child = GameObject.Find("CustomContent:" + asset.Creature.CreatureId);
-                    if (child != null)
-                    {
-                        if (asset.Creature.IsExplicitlyHidden && child.transform.localScale.x != 0f)
-                        {
-                            UnityEngine.Debug.Log("Hiding Custom Mesh...");
-                            child.transform.localScale = new Vector3(0f, 0f, 0f);
-                        }
-                        else if (!asset.Creature.IsExplicitlyHidden && child.transform.localScale.x != 1f)
-                        {
-                            UnityEngine.Debug.Log("Unhiding Custom Mesh...");
-                            child.transform.localScale = new Vector3(1f, 1f, 1f);
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Adds a custom mesh game object to the indicated asset remove any previous attached mesh objects
-        /// </summary>
-        /// <param name="asset">Parent asset to whom the custom mesh will be attached</param>
-        /// <param name="source">Path and name of the content file</param>
-        public void LoadCustomContent(CreatureBoardAsset asset, string source)
-        {
-            transformationInProgress = true;
-
-            try
-            {
-                UnityEngine.Debug.Log("Customizing Mini '" + asset.Creature.Name + "' Using '" + source + "'...");
-
-                // Effects are prefixed by # tag
-                bool effect = (source.IndexOf("#") > -1);
-                source = source.Replace("#", "");
-                string prefix = (effect) ? "CustomEffect:" : "CustomContent:";
-                Debug.Log("Effect = " + effect);
-
-                // Look up the content name to see if the actual file has an extenion or not
-                if (System.IO.Path.GetFileNameWithoutExtension(source) != "")
-                {
-                    // Obtain file name of the content
-                    if (System.IO.File.Exists(source))
-                    {
-                        // Asset Bundle
-                    }
-                    else if (System.IO.File.Exists(source + ".OBJ"))
-                    {
-                        // OBJ File
-                        source = source + ".OBJ";
-                    }
-                }
-                else
-                {
-                    // Source is blank meaning this is a remove request
-                    source = "";
-                }
-
-                if (source == "" || System.IO.File.Exists(source))
-                {
-                    Debug.Log("Destroying Game Object '" + prefix + asset.Creature.CreatureId + "'");
-                    GameObject.Destroy(GameObject.Find(prefix + asset.Creature.CreatureId));
-
-                    if (source != "")
-                    {
-                        GameObject content = null;
-                        // Determine which type of content it is 
-                        switch (System.IO.Path.GetExtension(source).ToUpper())
-                        {
-                            case "": // AssetBundle Source
-                                UnityEngine.Debug.Log("Using AssetBundle Loader");
-                                string assetBundleName = System.IO.Path.GetFileNameWithoutExtension(source);
-                                AssetBundle assetBundle = null;
-                                foreach (AssetBundle ab in AssetBundle.GetAllLoadedAssetBundles())
-                                {
-                                    // Debug.Log("Checking Existing AssetBundles: Found '" + ab.name + "'. Seeking '"+assetBundleName+"'");
-                                    if (ab.name == assetBundleName) { UnityEngine.Debug.Log("AssetBundle Is Already Loaded. Reusing."); assetBundle = ab; break; }
-                                }
-                                if (assetBundle == null) { UnityEngine.Debug.Log("AssetBundle Is Not Already Loaded. Loading."); assetBundle = AssetBundle.LoadFromFile(source); }
-                                content = GameObject.Instantiate(assetBundle.LoadAsset<GameObject>(System.IO.Path.GetFileNameWithoutExtension(source)));
-                                break;
-                            case ".OBJ": // OBJ/MTL Source
-                                UnityEngine.Debug.Log("Using OBJ/MTL Loader");
-                                UnityExtension.ShaderDetector.Reference(System.IO.Path.GetDirectoryName(source) + "/" + System.IO.Path.GetFileNameWithoutExtension(source) + ".mtl");
-                                content = new OBJLoader().Load(source);
-                                break;
-                            default: // Unrecognized Source
-                                Debug.Log("Content Type '" + System.IO.Path.GetExtension(source).ToUpper() + "' is not supported. Use OBJ/MTL or FBX.");
-                                break;
-                        }
-
-                        content.name = prefix + asset.Creature.CreatureId;
-                        content.transform.position = asset.gameObject.transform.position;
-                        content.transform.rotation = asset.BaseLoader.gameObject.transform.rotation;
-                        content.transform.SetParent(asset.BaseLoader.gameObject.transform);
-
-                        if (!effect)
-                        {
-                            UnityEngine.Debug.Log("Removing Core Mini Meshes");
-                            asset.CreatureLoader.LoadedAsset.GetComponent<MeshFilter>().mesh.triangles = new int[0];
-                        }
-                    }
-                }
-                else
-                {
-                    SystemMessage.DisplayInfoText("I don't know about\r\n" + System.IO.Path.GetFileNameWithoutExtension(source));
-                }
-            }
-            catch (Exception) {; }
-
-            transformationInProgress = false;
-        }
-
-        public class CustomAssetIndex
-        {
-            public Dictionary<UInt32, CustomAsset> assets { get; private set; } = new Dictionary<uint, CustomAsset>();
-
-            public void Load(string configPath = "")
-            {
-                this.assets = JsonConvert.DeserializeObject<Dictionary<UInt32, CustomAsset>>(System.IO.File.ReadAllText(configPath));
-            }
-
-            public void Save(string configPath = "")
-            {
-                System.IO.File.WriteAllText(configPath, JsonConvert.SerializeObject(this.assets, Formatting.Indented));
-            }
-        }
-
-        public class CustomAsset
-        {
-            public string content { get; set; }
-            public string source { get; set; }
-        }
+        }*/
     }
 }

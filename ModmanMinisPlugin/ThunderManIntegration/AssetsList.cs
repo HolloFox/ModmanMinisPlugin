@@ -18,8 +18,10 @@ namespace ModmanMinis
 {
     public partial class AssetsList : Form
     {
-        public AssetsList()
+        private string AssetType;
+        public AssetsList(string search)
         {
+            AssetType = search;
             InitializeComponent();
         }
 
@@ -41,7 +43,7 @@ namespace ModmanMinis
                 latest.version_number
             */
             // var message = $"<size=0>{mod_name}/{author}</size>{model.MiniName}";
-
+            if (AssetType == "Effects") model.transformName = $"#{model.transformName}";
             StatMessaging.SetInfo(LocalClient.SelectedCreatureId, ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
 
             // CreatureManager.SetCreatureName(LocalClient.SelectedCreatureId, $"Make me a: {message}");
@@ -55,7 +57,7 @@ namespace ModmanMinis
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
 
-            var bundles = ThunderManPlugin.GetAssetPaths();
+            var bundles = ThunderManPlugin.GetAssetPaths(AssetType);
 
             Dictionary<string, LoadAsset> assets = new Dictionary<string, LoadAsset>();
 

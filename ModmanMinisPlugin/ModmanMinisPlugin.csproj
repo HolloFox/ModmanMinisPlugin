@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ModmanMinis</RootNamespace>
-    <AssemblyName>ModmanMinis</AssemblyName>
+    <AssemblyName>ThunderManPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -394,15 +394,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomMinisPlugin\CharWordReader.cs" />
-    <Compile Include="CustomMinisPlugin\IStatHandler.cs" />
+    <Compile Include="CustomMinisPlugin\CustomMiniPlugin.cs" />
     <Compile Include="CustomMinisPlugin\MTLLoader.cs" />
     <Compile Include="CustomMinisPlugin\OBJLoader.cs" />
     <Compile Include="CustomMinisPlugin\OBJLoaderHelper.cs" />
     <Compile Include="CustomMinisPlugin\OBJObjectBuilder.cs" />
-    <Compile Include="CustomMinisPlugin\Program.cs" />
+    <Compile Include="CustomMinisPlugin\RequestHandler.cs" />
     <Compile Include="CustomMinisPlugin\ShaderDetector.cs" />
     <Compile Include="CustomMinisPlugin\StateDetection.cs" />
-    <Compile Include="CustomMinisPlugin\StatHandler.cs" />
     <Compile Include="CustomMinisPlugin\StringExtensions.cs" />
     <Compile Include="CustomMinisPlugin\TextureLoader\BinaryExtensions.cs" />
     <Compile Include="CustomMinisPlugin\TextureLoader\BMPLoader.cs" />

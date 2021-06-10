@@ -23,12 +23,12 @@ namespace ModmanMinis
         private const string Version = "0.9.0.0";
 
         // Configuration
-        private ConfigEntry<KeyboardShortcut> triggerKeyBasic { get; set; }
+        private ConfigEntry<KeyboardShortcut>[] triggerKeyBasic = new ConfigEntry<KeyboardShortcut>[2];
 
         // 
         private AssetsList list;
-        private static string dir = UnityEngine.Application.dataPath.Substring(0, UnityEngine.Application.dataPath.LastIndexOf("/")) + "/TaleSpire_CustomData/";
-
+        private AssetsList effectsList;
+        
         // My StatHandler
 
 
@@ -39,14 +39,20 @@ namespace ModmanMinis
         {
             Debug.Log("HolloFox's Modman Minis Plugin is Active.");
 
-            triggerKeyBasic = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
+            triggerKeyBasic[0] = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
+            triggerKeyBasic[1] = Config.Bind("Hotkeys", "Apply Aura", new KeyboardShortcut(KeyCode.Alpha2, KeyCode.LeftControl));
 
-            var bundles = GetAssetPaths();
-            if (bundles.Count() > 0) Debug.Log("Plugin Found Minis:");
-            foreach (var path in bundles)
+            foreach (var type in new []{"Minis", "Effects", "Props", "Tiles" })
             {
-                Debug.Log($"- {path.FullName}");
+                var Bundles = GetAssetPaths(type);
+                if (Bundles.Any()) Debug.Log($"Plugin Found {type}:");
+                foreach (var path in Bundles)
+                {
+                    Debug.Log($"{type} - {path.FullName}");
+                }
             }
+
+            CustomMiniPlugin.RequestHandler.AppendChanges(Guid,ModmanStatHandler.LoadCustomContent);
         }
 
         private bool isBoardLoaded()
@@ -61,32 +67,23 @@ namespace ModmanMinis
         /// </summary>
         void Update()
         {
-            StatMessaging.Check(Callback);
             if (isBoardLoaded())
             {
-                if (Extensions.StrictKeyCheck(triggerKeyBasic.Value))
+                if (Extensions.StrictKeyCheck(triggerKeyBasic[0].Value))
                 {
-                    Debug.Log("called");
-                    if (list == null || list.IsDisposed) list = new AssetsList();
+                    Debug.Log("Minis Called");
+                    if (list == null || list.IsDisposed) list = new AssetsList("Minis");
                     list.Show();
+                } else if (Extensions.StrictKeyCheck(triggerKeyBasic[1].Value))
+                {
+                    Debug.Log("Effects Called");
+                    if (effectsList == null || effectsList.IsDisposed) effectsList = new AssetsList("Effects");
+                    effectsList.Show();
                 }
-
-                // var requestHandler = CustomMiniPlugin.GetRequestHander();
-                
             }
         }
 
-        public void Callback(StatMessaging.Change[] name)
-        {
-            Debug.Log("callback:");
-            foreach (var change in name)
-            {
-                Debug.Log(JsonConvert.SerializeObject(change));
-            }
-            
-        }
-
-        public static ParallelQuery<FileInfo> GetAssetPaths()
+        public static ParallelQuery<FileInfo> GetAssetPaths(string assetType = "Minis")
         {
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
@@ -97,7 +94,7 @@ namespace ModmanMinis
             var subdirs = dInfo.GetDirectories()
                 .AsParallel()
                 .GetSubfolders("TaleSpire_CustomData")
-                .GetSubfolders("Minis")
+                .GetSubfolders(assetType)
                 .EnumerateFiles();
             return subdirs;
         }
