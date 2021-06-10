@@ -170,6 +170,18 @@ namespace LordAshes
                                 if (assetBundle == null) { UnityEngine.Debug.Log("AssetBundle Is Not Already Loaded. Loading."); assetBundle = AssetBundle.LoadFromFile(source); }
                                 content = GameObject.Instantiate(assetBundle.LoadAsset<GameObject>(System.IO.Path.GetFileNameWithoutExtension(source)));
                                 break;
+                            case ".MINI": // AssetBundle Source
+                                UnityEngine.Debug.Log("Using AssetBundle Loader");
+                                string massetBundleName = System.IO.Path.GetFileNameWithoutExtension(source);
+                                AssetBundle massetBundle = null;
+                                foreach (AssetBundle ab in AssetBundle.GetAllLoadedAssetBundles())
+                                {
+                                    // Debug.Log("Checking Existing AssetBundles: Found '" + ab.name + "'. Seeking '"+assetBundleName+"'");
+                                    if (ab.name == massetBundleName) { UnityEngine.Debug.Log("AssetBundle Is Already Loaded. Reusing."); massetBundle = ab; break; }
+                                }
+                                if (massetBundle == null) { UnityEngine.Debug.Log("AssetBundle Is Not Already Loaded. Loading."); massetBundle = AssetBundle.LoadFromFile(source); }
+                                content = GameObject.Instantiate(massetBundle.LoadAsset<GameObject>(System.IO.Path.GetFileNameWithoutExtension(source)));
+                                break;
                             case ".OBJ": // OBJ/MTL Source
                                 UnityEngine.Debug.Log("Using OBJ/MTL Loader");
                                 if (!System.IO.File.Exists(System.IO.Path.GetDirectoryName(source) + "/" + System.IO.Path.GetFileNameWithoutExtension(source) + ".mtl"))

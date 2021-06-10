@@ -16,9 +16,9 @@ namespace ModmanMinis
                 );
         }
 
-        public static ParallelQuery<FileInfo> EnumerateFiles(this ParallelQuery<DirectoryInfo> query)
+        public static ParallelQuery<FileInfo> EnumerateFiles(this ParallelQuery<DirectoryInfo> query, string ext)
         {
-            return query.SelectMany(c => c.EnumerateFiles());
+            return query.SelectMany(c => c.EnumerateFiles().Where(d => d.FullName.EndsWith(ext)));
         }
 
         public static bool StrictKeyCheck(KeyboardShortcut check)

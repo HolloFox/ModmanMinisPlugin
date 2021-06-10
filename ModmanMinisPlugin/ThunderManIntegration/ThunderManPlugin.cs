@@ -42,7 +42,7 @@ namespace ModmanMinis
             triggerKeyBasic[0] = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
             triggerKeyBasic[1] = Config.Bind("Hotkeys", "Apply Aura", new KeyboardShortcut(KeyCode.Alpha2, KeyCode.LeftControl));
 
-            foreach (var type in new []{"Minis", "Effects", "Props", "Tiles" })
+            /*foreach (var type in new []{"Minis", "Effects", "Props", "Tiles" })
             {
                 var Bundles = GetAssetPaths(type);
                 if (Bundles.Any()) Debug.Log($"Plugin Found {type}:");
@@ -50,7 +50,7 @@ namespace ModmanMinis
                 {
                     Debug.Log($"{type} - {path.FullName}");
                 }
-            }
+            }*/
 
             CustomMiniPlugin.RequestHandler.AppendChanges(Guid,ModmanStatHandler.LoadCustomContent);
         }
@@ -93,9 +93,7 @@ namespace ModmanMinis
             DirectoryInfo dInfo = new DirectoryInfo(pluginsFolder);
             var subdirs = dInfo.GetDirectories()
                 .AsParallel()
-                .GetSubfolders("TaleSpire_CustomData")
-                .GetSubfolders(assetType)
-                .EnumerateFiles();
+                .EnumerateFiles(".mini");
             return subdirs;
         }
     }
