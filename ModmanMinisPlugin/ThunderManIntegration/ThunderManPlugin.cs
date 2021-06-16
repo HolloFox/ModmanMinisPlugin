@@ -1,11 +1,13 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
-using BepInEx.Configuration;
 using Bounce.Unmanaged;
 using LordAshes;
+using Newtonsoft.Json;
 using RadialUI;
+using ThunderMan.Manifests;
 using UnityEngine;
 
 namespace ThunderMan.ThunderManIntegration
@@ -55,20 +57,10 @@ namespace ThunderMan.ThunderManIntegration
             };
 
             /* Start */
-            RadialUIPlugin.AddOnCharacter(Guid + "RemoveAuras",
+            RadialUIPlugin.AddOnCharacter(Guid + "SetAuras",
                 new MapMenu.ItemArgs
                 {
-                    Title = "Remove Auras",
-                    CloseMenuOnActivate = true,
-                    Action = RemoveAura
-                },
-                IsInGmMode
-            );
-
-            RadialUIPlugin.AddOnCharacter(Guid + "AddAuras",
-                new MapMenu.ItemArgs
-                {
-                    Title = "Add Auras",
+                    Title = "Set Auras",
                     CloseMenuOnActivate = true,
                     Action = AddAura
                 },
@@ -95,6 +87,14 @@ namespace ThunderMan.ThunderManIntegration
                 },
                 IsInGmMode
                 );
+        }
+
+        private static Sprite sprite(string FileName)
+        {
+            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            Texture2D tex = new Texture2D(32, 32);
+            tex.LoadImage(System.IO.File.ReadAllBytes(dir + FileName));
+            return Sprite.Create(tex, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f));
         }
 
         public void Request(StatMessaging.Change[] changes)
@@ -140,13 +140,6 @@ namespace ThunderMan.ThunderManIntegration
             effectsList.Show();
         }
 
-        public void RemoveAura(MapMenuItem mmi, object o)
-        {
-            Debug.Log("Effects Called");
-            if (effectsList == null || effectsList.IsDisposed) effectsList = new AssetsList("Effects");
-            effectsList.Show();
-        }
-
         public static NGuid RadialTargetedMini;
 
         private static bool IsInGmMode(NGuid selected, NGuid targeted)
@@ -161,7 +154,7 @@ namespace ThunderMan.ThunderManIntegration
             return false; // LocalClient.IsInGmMode;
         }
 
-        public static ParallelQuery<FileInfo> GetAssetPaths(string assetType = "Minis")
+        public static ParallelQuery<FileInfo> GetAuras()
         {
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
@@ -170,9 +163,33 @@ namespace ThunderMan.ThunderManIntegration
 
             DirectoryInfo dInfo = new DirectoryInfo(pluginsFolder);
             var subdirs = dInfo.GetDirectories()
-                .AsParallel()
-                .EnumerateFiles(".mini");
-            return subdirs;
+                .AsParallel();
+            var i = new List<FileInfo>();
+            foreach (var subdir in subdirs.Where(s => File.Exists(s.FullName + "\\assets.json")))
+            {
+                var obj = JsonConvert.DeserializeObject<assetManifest>(File.ReadAllText(subdir.FullName + "\\assets.json"));
+                i.AddRange(obj.Auras.Select(m => new FileInfo(subdir.FullName + "\\" + m)));
+            }
+            return i.AsParallel();
+        }
+
+        public static ParallelQuery<FileInfo> GetMinis()
+        {
+            var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
+            Debug.Log($"Assembly: {assemblyFolder}");
+            Debug.Log($"Plugins: {pluginsFolder}");
+
+            DirectoryInfo dInfo = new DirectoryInfo(pluginsFolder);
+            var subdirs = dInfo.GetDirectories()
+                .AsParallel();
+            var i = new List<FileInfo>();
+            foreach (var subdir in subdirs.Where(s => File.Exists(s.FullName + "\\assets.json")))
+            {
+                var obj = JsonConvert.DeserializeObject<assetManifest>(File.ReadAllText(subdir.FullName + "\\assets.json"));
+                i.AddRange(obj.Minis.Select(m => new FileInfo(subdir.FullName + "\\" + m)));
+            }
+            return i.AsParallel();
         }
     }
 }

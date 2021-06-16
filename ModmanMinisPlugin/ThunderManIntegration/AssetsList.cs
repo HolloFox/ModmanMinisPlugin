@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using LordAshes;
@@ -33,14 +34,9 @@ namespace ThunderMan.ThunderManIntegration
             var version = obj.version_number;
             
             model.Ror2mm = $"ror2mm://v1/install/talespire.thunderstore.io/{author}/{mod_name}/{version}/";
-            /* GET	https://talespire.thunderstore.io/api/experimental/package/{Author}/{PluginName}/ => 
-                latest.version_number
-            */
-            // var message = $"<size=0>{mod_name}/{author}</size>{model.MiniName}";
             if (AssetType == "Effects") model.transformName = $"#{model.transformName}";
-            StatMessaging.SetInfo(LocalClient.SelectedCreatureId, ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
+            StatMessaging.SetInfo(new CreatureGuid(ThunderManPlugin.RadialTargetedMini), ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
 
-            // CreatureManager.SetCreatureName(LocalClient.SelectedCreatureId, $"Make me a: {message}");
         }
 
         public List<LoadAsset> paths = new List<LoadAsset>();
@@ -51,7 +47,7 @@ namespace ThunderMan.ThunderManIntegration
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
 
-            var bundles = ThunderManPlugin.GetAssetPaths(AssetType);
+            ParallelQuery<FileInfo> bundles = ThunderManPlugin.GetMinis();
 
             Dictionary<string, LoadAsset> assets = new Dictionary<string, LoadAsset>();
 
@@ -70,19 +66,11 @@ namespace ThunderMan.ThunderManIntegration
                 paths.Add(asset);
                 listBox1.Items.Add(path.Name);
             }
-
-            // List<String> paths = assets.Keys.ToList().or;
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             var index = listBox1.SelectedIndex;
-            var path = paths[index];
-            if (Directory.Exists(pluginsFolder + "/icon.png"))
-            {
-                var icon = pluginsFolder + "/icon.png";
-                Debug.Log(icon);
-            }
         }
 
         private void button2_Click(object sender, EventArgs e)

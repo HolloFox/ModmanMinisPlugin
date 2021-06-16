@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Reflection;
+using LordAshes;
 using Newtonsoft.Json;
 using UnityEngine;
-using static ThunderMan.CustomMinisPlugin.rCMiniPlugin;
 
 namespace ThunderMan.ThunderManIntegration
 {
@@ -18,9 +18,11 @@ namespace ThunderMan.ThunderManIntegration
             var data = JsonConvert.DeserializeObject<LoadAsset>(source);
             Debug.Log($"data: {data}");
             var folder = data.transformName.Substring(0, data.transformName.IndexOf("\\"));
+            var handler = CustomMiniPlugin.GetRequestHander();
             if (Directory.Exists(pluginsFolder + "\\" + folder))
             {
-                ModRequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+                
+                handler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
             }
             else
             {
@@ -30,7 +32,7 @@ namespace ThunderMan.ThunderManIntegration
                     () =>
                     {
                         System.Diagnostics.Process.Start(data.Ror2mm).WaitForExit();
-                        ModRequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+                        handler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
                     }, "Don't Download");
             }
         }

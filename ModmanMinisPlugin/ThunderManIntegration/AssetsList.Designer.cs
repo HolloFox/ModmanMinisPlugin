@@ -95,6 +95,7 @@ namespace ThunderMan.ThunderManIntegration
             this.Controls.Add(this.listBox1);
             this.Name = "AssetsList";
             this.Text = "DropDown Listbox Mock up";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.AssetsList_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

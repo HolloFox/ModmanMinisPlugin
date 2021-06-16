@@ -400,7 +400,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomMinisPlugin\RequestHandler.cs" />
     <Compile Include="SystemMessageExt\SystemMessageExtensions.cs" />
     <Compile Include="ThunderManIntegration\AssetsList.cs">
       <SubType>Form</SubType>
@@ -425,6 +424,8 @@
       <DependentUpon>AssetsList.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="CustomMinisPlugin\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
