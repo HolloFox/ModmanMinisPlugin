@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
+using Bounce.Unmanaged;
 using LordAshes;
 using RadialUI;
 using UnityEngine;
@@ -10,7 +11,7 @@ using UnityEngine;
 namespace ThunderMan.ThunderManIntegration
 {
 
-    [BepInPlugin(Guid, "ThunderMan Plugin", Version)]
+    [BepInPlugin(Guid, "Hollo Foxes' ThunderMan Plug-In", Version)]
     [BepInDependency("org.lordashes.plugins.custommini")]
     [BepInDependency(StatMessaging.Guid)]
     [BepInDependency(RadialUIPlugin.Guid)]
@@ -58,6 +59,36 @@ namespace ThunderMan.ThunderManIntegration
                     Debug.Log("Stat Messaging stopped looking for messages.");
                 }
             };
+
+            RadialUIPlugin.AddOnCharacter(Guid + "ChangeMini",
+                new MapMenu.ItemArgs
+                {
+                    Title = "Set Group",
+                    CloseMenuOnActivate = true,
+                    Action = ChangeMini
+                },
+                IsInGmMode
+                );
+
+            RadialUIPlugin.AddOnCharacter(Guid + "AddAuras",
+                new MapMenu.ItemArgs
+                {
+                    Title = "Add Auras",
+                    CloseMenuOnActivate = true,
+                    Action = AddAura
+                },
+                IsInGmMode
+            );
+
+            RadialUIPlugin.AddOnCharacter(Guid + "RemoveAuras",
+                new MapMenu.ItemArgs
+                {
+                    Title = "Remove Auras",
+                    CloseMenuOnActivate = true,
+                    Action = RemoveAura
+                },
+                IsInGmMode
+            );
         }
 
         public void Request(StatMessaging.Change[] changes)
@@ -86,20 +117,36 @@ namespace ThunderMan.ThunderManIntegration
         /// </summary>
         void Update()
         {
-            if (ready && isBoardLoaded())
-            {
-                if (Extensions.StrictKeyCheck(triggerKeyBasic[0].Value))
-                {
-                    Debug.Log("Minis Called");
-                    if (list == null || list.IsDisposed) list = new AssetsList("Minis");
-                    list.Show();
-                } else if (Extensions.StrictKeyCheck(triggerKeyBasic[1].Value))
-                {
-                    Debug.Log("Effects Called");
-                    if (effectsList == null || effectsList.IsDisposed) effectsList = new AssetsList("Effects");
-                    effectsList.Show();
-                }
-            }
+
+        }
+
+        public void ChangeMini(MapMenuItem mmi, object o)
+        {
+            Debug.Log("Minis Called");
+            if (list == null || list.IsDisposed) list = new AssetsList("Minis");
+            list.Show();
+        }
+
+        public void AddAura(MapMenuItem mmi, object o)
+        {
+            Debug.Log("Effects Called");
+            if (effectsList == null || effectsList.IsDisposed) effectsList = new AssetsList("Effects");
+            effectsList.Show();
+        }
+
+        public void RemoveAura(MapMenuItem mmi, object o)
+        {
+            Debug.Log("Effects Called");
+            if (effectsList == null || effectsList.IsDisposed) effectsList = new AssetsList("Effects");
+            effectsList.Show();
+        }
+
+        public static NGuid RadialTargetedMini;
+
+        private bool IsInGmMode(NGuid selected, NGuid targeted)
+        {
+            RadialTargetedMini = targeted;
+            return LocalClient.IsInGmMode;
         }
 
         public static ParallelQuery<FileInfo> GetAssetPaths(string assetType = "Minis")
