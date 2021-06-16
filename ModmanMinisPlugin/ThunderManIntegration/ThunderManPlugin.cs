@@ -56,18 +56,18 @@ namespace ThunderMan.ThunderManIntegration
                 }
             };
 
-            /* Start */
+            /*
             RadialUIPlugin.AddOnCharacter(Guid + "SetAuras",
                 new MapMenu.ItemArgs
                 {
                     Title = "Set Auras",
                     CloseMenuOnActivate = true,
                     Action = AddAura,
-                    // Icon = sprite("Aura.png")
+                    Icon = sprite("Aura.png")
                 },
                 IsInGmMode
             );
-            /* End */
+            */
 
             RadialUIPlugin.AddOnCharacter(Guid + "RevertMini",
                 new MapMenu.ItemArgs
