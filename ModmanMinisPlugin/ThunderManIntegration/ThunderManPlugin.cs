@@ -62,7 +62,8 @@ namespace ThunderMan.ThunderManIntegration
                 {
                     Title = "Set Auras",
                     CloseMenuOnActivate = true,
-                    Action = AddAura
+                    Action = AddAura,
+                    // Icon = sprite("Aura.png")
                 },
                 IsInGmMode
             );
@@ -93,7 +94,7 @@ namespace ThunderMan.ThunderManIntegration
         {
             var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             Texture2D tex = new Texture2D(32, 32);
-            tex.LoadImage(System.IO.File.ReadAllBytes(dir + FileName));
+            tex.LoadImage(File.ReadAllBytes(dir + "\\"  + FileName));
             return Sprite.Create(tex, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f));
         }
 

@@ -14,6 +14,7 @@ namespace ThunderMan.ThunderManIntegration
     public partial class AssetsList : Form
     {
         private string AssetType;
+        
         public AssetsList(string search)
         {
             AssetType = search;
@@ -36,7 +37,6 @@ namespace ThunderMan.ThunderManIntegration
             model.Ror2mm = $"ror2mm://v1/install/talespire.thunderstore.io/{author}/{mod_name}/{version}/";
             if (AssetType == "Effects") model.transformName = $"#{model.transformName}";
             StatMessaging.SetInfo(new CreatureGuid(ThunderManPlugin.RadialTargetedMini), ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
-
         }
 
         public List<LoadAsset> paths = new List<LoadAsset>();
@@ -68,14 +68,9 @@ namespace ThunderMan.ThunderManIntegration
             }
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var index = listBox1.SelectedIndex;
-        }
-
         private void button2_Click(object sender, EventArgs e)
         {
-
+            this.Close();
         }
     }
 }
