@@ -1,100 +1,26 @@
-﻿using Dummiesman;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using System;
 using BepInEx;
+using Dummiesman;
+using LordAshes;
+using UnityEngine;
 
-namespace LordAshes
+namespace ThunderMan.CustomMinisPlugin
 {
 
-    public partial class CustomMiniPlugin : BaseUnityPlugin
+    public partial class rCMiniPlugin : BaseUnityPlugin
     {
-        public class RequestHandler
+        public class ModRequestHandler
         {
-            // Directory for custom content
-            private string dir = "";
 
             /// <summary>
             /// Constructor taking in the content directory and identifiers
             /// </summary>
             /// <param name="requestIdentifiers"></param>
             /// <param name="path"></param>
-            public RequestHandler(string guid, string path)
+            public ModRequestHandler()
             {
-                this.dir = path;
             }
 
-            private static readonly Dictionary<string,Action<CreatureBoardAsset, string>>
-                ChangesActions = new Dictionary<string,Action<CreatureBoardAsset, string>>();
-
-            public static void AppendChanges(string key, Action<CreatureBoardAsset, string> action)
-            {
-                ChangesActions.Add(key,action);
-            }
-
-            /// <summary>
-            /// Callback method that is informed by StatMessaging when the Stat Block has changed.
-            /// This is triggered on any changes in the Stat Block and thus it is the responsibilty of the
-            /// callback function to determine which Stat Block changes are applicable to the plugin
-            /// (typically by checking the change.key for an expected key)
-            /// </summary>
-            /// <param name="changes">Array of changes detected by the Stat Messaging plugin</param>
-            public void Request(StatMessaging.Change[] changes)
-            {
-                // Process all changes
-                foreach (StatMessaging.Change change in changes)
-                {
-                    // Find a reference to the indicated mini
-                    CreaturePresenter.TryGetAsset(change.cid, out var asset);
-                    // If the change is not for the CustomMiniPlugin key then ignore it
-                    if (asset != null)
-                    {
-                        if (change.key != "org.lordashes.plugins.custommini" && ChangesActions.ContainsKey(change.key))
-                        {
-                            ChangesActions[change.key](asset, change.value);
-                        }
-                        // Process the request (since remove has a blank value this will trigger mesh removal)
-                        else if (change.key == "org.lordashes.plugins.custommini")
-                        {
-                            LoadCustomContent(asset, dir + "Minis/" + change.value + "/" + change.value);
-                        }
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Method to sync the transformation mesh with the character's stealth mode setting
-            /// </summary>
-            public void SyncStealthMode()
-            {
-                foreach (CreatureBoardAsset asset in CreaturePresenter.AllCreatureAssets.ToArray())
-                {
-                    try
-                    {
-                        if (asset.Creature.IsExplicitlyHidden)
-                        {
-                            if (asset.CreatureLoader.LoadedAsset.GetComponent<MeshRenderer>().enabled)
-                            {
-                                asset.CreatureLoader.LoadedAsset.GetComponent<MeshRenderer>().enabled = false;
-                                asset.CreatureLoader.LoadedAsset.GetComponent<MeshRenderer>().forceRenderingOff = true;
-                            }
-                        }
-                        else
-                        {
-                            if (!asset.CreatureLoader.LoadedAsset.GetComponent<MeshRenderer>().enabled)
-                            {
-                                asset.CreatureLoader.LoadedAsset.GetComponent<MeshRenderer>().enabled = true;
-                                asset.CreatureLoader.LoadedAsset.GetComponent<MeshRenderer>().forceRenderingOff = false;
-                            }
-                        }
-                    }
-                    catch (Exception) {; }
-                }
-            }
-
-            public static List<Func<string, CreatureGuid, bool>>
-                missingContentCallbacks = new List<Func<string, CreatureGuid, bool>>();
 
             /// <summary>
             /// Adds a custom mesh game object to the indicated asset remove any previous attached mesh objects
@@ -125,15 +51,6 @@ namespace LordAshes
                         {
                             // OBJ File
                             source = source + ".OBJ";
-                        }
-                        else
-                        {
-                            // No Compatibale Content Found
-                            foreach (var callback in missingContentCallbacks)
-                            {
-                                if (callback(asset.Creature.Name, asset.Creature.CreatureId)) break;
-                            }
-                            return;
                         }
                     }
                     else
@@ -186,10 +103,7 @@ namespace LordAshes
                                 UnityEngine.Debug.Log("Using OBJ/MTL Loader");
                                 if (!System.IO.File.Exists(System.IO.Path.GetDirectoryName(source) + "/" + System.IO.Path.GetFileNameWithoutExtension(source) + ".mtl"))
                                 {
-                                    foreach (var callback in missingContentCallbacks)
-                                    {
-                                        if (callback(asset.Creature.Name + " (" + System.IO.Path.GetDirectoryName(source) + "/" + System.IO.Path.GetFileNameWithoutExtension(source) + ".mtl)", asset.Creature.CreatureId)) break;
-                                    }
+            
                                 }
                                 UnityExtension.ShaderDetector.Reference(System.IO.Path.GetDirectoryName(source) + "/" + System.IO.Path.GetFileNameWithoutExtension(source) + ".mtl");
                                 content = new OBJLoader().Load(source);
@@ -211,7 +125,8 @@ namespace LordAshes
                                 asset.CreatureLoader.transform.localRotation = Quaternion.Euler(0, 180, 0);
                                 asset.CreatureLoader.transform.localEulerAngles = new Vector3(0, 180, 0);
                                 asset.CreatureLoader.transform.localScale = new Vector3(1f, 1f, 1f);
-                                ReplaceGameObjectMesh(content, asset.CreatureLoader.LoadedAsset);
+                                var handler = new CustomMiniPlugin.RequestHandler(null, null);
+                                handler.ReplaceGameObjectMesh(content, asset.CreatureLoader.LoadedAsset);
                             }
                             catch (Exception) {; }
                             UnityEngine.Debug.Log("Destroying Template...");
@@ -224,72 +139,6 @@ namespace LordAshes
                     }
                 }
                 catch (Exception) {; }
-            }
-
-            /// <summary>
-            /// Method to replace the destination MeshFilter and MeshRenderer with that of the source.
-            /// Since component cannot be actually switched, all properties are copied over.
-            /// </summary>
-            /// <param name="source"></param>
-            /// <param name="destination"></param>
-            public static void ReplaceGameObjectMesh(GameObject source, GameObject destination)
-            {
-                MeshFilter dMF = destination.GetComponent<MeshFilter>();
-                MeshRenderer dMR = destination.GetComponent<MeshRenderer>();
-                if (dMF == null || dMR == null) { Debug.LogWarning("Unable get destination MF or MR."); return; }
-
-                destination.transform.position = new Vector3(0, 0, 0);
-                destination.transform.rotation = Quaternion.Euler(0, 0, 0);
-                destination.transform.eulerAngles = new Vector3(0, 0, 0);
-                destination.transform.localPosition = new Vector3(0, 0, 0);
-                destination.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                destination.transform.localEulerAngles = new Vector3(0, 0, 0);
-                destination.transform.localScale = new Vector3(1f, 1f, 1f);
-
-                dMF.transform.position = new Vector3(0, 0, 0);
-                dMF.transform.rotation = Quaternion.Euler(0, 0, 0);
-                dMF.transform.eulerAngles = new Vector3(0, 0, 0);
-                dMF.transform.localPosition = new Vector3(0, 0, 0);
-                dMF.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                dMF.transform.localEulerAngles = new Vector3(0, 0, 0);
-                dMF.transform.localScale = new Vector3(1, 1, 1);
-
-                dMR.transform.position = new Vector3(0, 0, 0);
-                dMR.transform.rotation = Quaternion.Euler(0, 0, 0);
-                dMR.transform.eulerAngles = new Vector3(0, 0, 0);
-                dMR.transform.localPosition = new Vector3(0, 0, 0);
-                dMR.transform.localRotation = Quaternion.Euler(0, 0, 0);
-                dMR.transform.localEulerAngles = new Vector3(0, 0, 0);
-                dMR.transform.localScale = new Vector3(1, 1, 1);
-
-                MeshFilter sMF = (source.GetComponent<MeshFilter>() != null) ? source.GetComponent<MeshFilter>() : source.GetComponentInChildren<MeshFilter>();
-                if (sMF != null)
-                {
-                    Debug.Log("Copying MF->MF");
-                    dMF.mesh = sMF.mesh;
-                    dMF.sharedMesh = sMF.sharedMesh;
-                }
-
-                MeshRenderer sMR = (source.GetComponent<MeshRenderer>() != null) ? source.GetComponent<MeshRenderer>() : source.GetComponentInChildren<MeshRenderer>();
-                if (sMR != null)
-                {
-                    Debug.Log("Copying MR->MR");
-                    dMR.material = sMR.material;
-                    dMR.materials = sMR.materials;
-                    dMR.sharedMaterial = sMR.sharedMaterial;
-                    dMR.sharedMaterials = sMR.sharedMaterials;
-                }
-
-                SkinnedMeshRenderer sSMR = (source.GetComponent<SkinnedMeshRenderer>() != null) ? source.GetComponent<SkinnedMeshRenderer>() : source.GetComponentInChildren<SkinnedMeshRenderer>();
-                if (sSMR != null)
-                {
-                    Debug.Log("Copying SMR->MF/MR");
-                    dMF.sharedMesh = sSMR.sharedMesh;
-                    dMR.material = sSMR.material;
-                    dMR.materials = sSMR.materials;
-                    dMR.sharedMaterial = sSMR.sharedMaterial;
-                    dMR.sharedMaterials = sSMR.sharedMaterials;
-                }
             }
         }
     }

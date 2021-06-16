@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Dummiesman;
-using LordAshes;
 using Newtonsoft.Json;
 using UnityEngine;
+using static ThunderMan.CustomMinisPlugin.rCMiniPlugin;
 
-namespace ModmanMinis
+namespace ThunderMan.ThunderManIntegration
 {
     public static class ModmanStatHandler
     {
@@ -24,10 +18,9 @@ namespace ModmanMinis
             var data = JsonConvert.DeserializeObject<LoadAsset>(source);
             Debug.Log($"data: {data}");
             var folder = data.transformName.Substring(0, data.transformName.IndexOf("\\"));
-
             if (Directory.Exists(pluginsFolder + "\\" + folder))
             {
-                CustomMiniPlugin.RequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+                ModRequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
             }
             else
             {
@@ -37,7 +30,7 @@ namespace ModmanMinis
                     () =>
                     {
                         System.Diagnostics.Process.Start(data.Ror2mm).WaitForExit();
-                        CustomMiniPlugin.RequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+                        ModRequestHandler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
                     }, "Don't Download");
             }
         }

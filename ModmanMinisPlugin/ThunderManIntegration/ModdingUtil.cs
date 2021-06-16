@@ -1,24 +1,23 @@
-﻿using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
-using System.Reflection;
-using TMPro;
-using BepInEx;
-using UnityEngine.SceneManagement;
-using System;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using Bounce.Unmanaged;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using DataModel;
-using Unity.Mathematics;
-using System.Collections;
+using System.Net;
+using System.Net.Sockets;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using BepInEx;
 using BepInEx.Logging;
+using Bounce.Unmanaged;
+using DataModel;
+using Newtonsoft.Json;
+using TMPro;
+using Unity.Mathematics;
+using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.SceneManagement;
 
-namespace ModdingTales
+namespace ThunderMan.ThunderManIntegration
 {
     public class PlayerControlled
     {

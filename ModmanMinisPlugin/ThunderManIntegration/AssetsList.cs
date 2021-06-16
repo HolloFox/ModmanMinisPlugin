@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Bounce.Unmanaged;
 using LordAshes;
 using Newtonsoft.Json;
+using ThunderMan.Manifests;
 using UnityEngine;
 
-namespace ModmanMinis
+namespace ThunderMan.ThunderManIntegration
 {
     public partial class AssetsList : Form
     {
@@ -31,7 +25,7 @@ namespace ModmanMinis
 
             var modFolder = model.transformName.Substring(0, model.transformName.IndexOf("\\"));
             
-            manifest obj = JsonConvert.DeserializeObject<manifest>(File.ReadAllText(pluginsFolder+"\\" + modFolder + "\\manifest.json"));
+            modManifest obj = JsonConvert.DeserializeObject<modManifest>(File.ReadAllText(pluginsFolder+"\\" + modFolder + "\\modManifest.json"));
 
             // Don't bother loading json file until needed
             var author = modFolder.Substring(0,modFolder.IndexOf("-"));
@@ -88,8 +82,12 @@ namespace ModmanMinis
             {
                 var icon = pluginsFolder + "/icon.png";
                 Debug.Log(icon);
-                pictureBox1.ImageLocation = icon;
             }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

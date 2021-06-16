@@ -1,26 +1,24 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Configuration;
-using Bounce.Unmanaged;
 using LordAshes;
-using Newtonsoft.Json;
-using Steamworks;
+using RadialUI;
 using UnityEngine;
 
-namespace ModmanMinis
+namespace ThunderMan.ThunderManIntegration
 {
 
     [BepInPlugin(Guid, "ThunderMan Plugin", Version)]
     [BepInDependency("org.lordashes.plugins.custommini")]
     [BepInDependency(StatMessaging.Guid)]
+    [BepInDependency(RadialUIPlugin.Guid)]
     public class ThunderManPlugin: BaseUnityPlugin
     {
         // constants
         public const string Guid = "org.hollofox.plugins.ThunderManPlugin";
-        private const string Version = "1.0.0.0";
+        private const string Version = "1.1.0.0";
 
         // Configuration
         private ConfigEntry<KeyboardShortcut>[] triggerKeyBasic = new ConfigEntry<KeyboardShortcut>[2];
@@ -28,9 +26,9 @@ namespace ModmanMinis
         // 
         private AssetsList list;
         private AssetsList effectsList;
-        
-        // My StatHandler
 
+        // My StatHandler
+        private static bool ready = false;
 
         /// <summary>
         /// Awake plugin
@@ -42,9 +40,24 @@ namespace ModmanMinis
             triggerKeyBasic[0] = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
             triggerKeyBasic[1] = Config.Bind("Hotkeys", "Apply Aura", new KeyboardShortcut(KeyCode.Alpha2, KeyCode.LeftControl));
 
-            ModdingTales.ModdingUtils.Initialize(this, Logger);
+            ModdingUtils.Initialize(this, Logger);
 
             StatMessaging.Subscribe(Guid, Request);
+
+            BoardSessionManager.OnStateChange += (s) =>
+            {
+                if (s.ToString().Contains("+Active"))
+                {
+                    ready = true;
+                    Debug.Log("Stat Messaging started looking for messages.");
+                }
+                else
+                {
+                    ready = false;
+                    StatMessaging.Reset();
+                    Debug.Log("Stat Messaging stopped looking for messages.");
+                }
+            };
         }
 
         public void Request(StatMessaging.Change[] changes)
@@ -73,7 +86,7 @@ namespace ModmanMinis
         /// </summary>
         void Update()
         {
-            if (isBoardLoaded())
+            if (ready && isBoardLoaded())
             {
                 if (Extensions.StrictKeyCheck(triggerKeyBasic[0].Value))
                 {
