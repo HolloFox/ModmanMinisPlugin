@@ -25,7 +25,7 @@ namespace ThunderMan.ThunderManIntegration
 
             var modFolder = model.transformName.Substring(0, model.transformName.IndexOf("\\"));
             
-            modManifest obj = JsonConvert.DeserializeObject<modManifest>(File.ReadAllText(pluginsFolder+"\\" + modFolder + "\\modManifest.json"));
+            modManifest obj = JsonConvert.DeserializeObject<modManifest>(File.ReadAllText(pluginsFolder+"\\" + modFolder + "\\manifest.json"));
 
             // Don't bother loading json file until needed
             var author = modFolder.Substring(0,modFolder.IndexOf("-"));

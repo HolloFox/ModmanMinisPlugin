@@ -11,8 +11,8 @@ using UnityEngine;
 namespace ThunderMan.ThunderManIntegration
 {
 
-    [BepInPlugin(Guid, "Hollo Foxes' ThunderMan Plug-In", Version)]
-    [BepInDependency("org.lordashes.plugins.custommini")]
+    [BepInPlugin(Guid, Name, Version)]
+    [BepInDependency(CustomMiniPlugin.Guid)]
     [BepInDependency(StatMessaging.Guid)]
     [BepInDependency(RadialUIPlugin.Guid)]
     public class ThunderManPlugin: BaseUnityPlugin
@@ -20,11 +20,9 @@ namespace ThunderMan.ThunderManIntegration
         // constants
         public const string Guid = "org.hollofox.plugins.ThunderManPlugin";
         private const string Version = "1.1.0.0";
+        private const string Name = "HolloFoxes' ThunderMan Plug-In";
 
-        // Configuration
-        private ConfigEntry<KeyboardShortcut>[] triggerKeyBasic = new ConfigEntry<KeyboardShortcut>[2];
-
-        // 
+        // Need to remove these and use SystemMessageExtensions
         private AssetsList list;
         private AssetsList effectsList;
 
@@ -36,11 +34,7 @@ namespace ThunderMan.ThunderManIntegration
         /// </summary>
         void Awake()
         {
-            Debug.Log("HolloFox's Modman Minis Plugin is Active.");
-
-            triggerKeyBasic[0] = Config.Bind("Hotkeys", "Transform Mini", new KeyboardShortcut(KeyCode.Alpha1, KeyCode.LeftControl));
-            triggerKeyBasic[1] = Config.Bind("Hotkeys", "Apply Aura", new KeyboardShortcut(KeyCode.Alpha2, KeyCode.LeftControl));
-
+            Debug.Log($"{Name} is Active.");
             ModdingUtils.Initialize(this, Logger);
 
             StatMessaging.Subscribe(Guid, Request);
@@ -60,15 +54,16 @@ namespace ThunderMan.ThunderManIntegration
                 }
             };
 
-            RadialUIPlugin.AddOnCharacter(Guid + "ChangeMini",
+            /* Start */
+            RadialUIPlugin.AddOnCharacter(Guid + "RemoveAuras",
                 new MapMenu.ItemArgs
                 {
-                    Title = "Set Group",
+                    Title = "Remove Auras",
                     CloseMenuOnActivate = true,
-                    Action = ChangeMini
+                    Action = RemoveAura
                 },
                 IsInGmMode
-                );
+            );
 
             RadialUIPlugin.AddOnCharacter(Guid + "AddAuras",
                 new MapMenu.ItemArgs
@@ -79,16 +74,27 @@ namespace ThunderMan.ThunderManIntegration
                 },
                 IsInGmMode
             );
+            /* End */
 
-            RadialUIPlugin.AddOnCharacter(Guid + "RemoveAuras",
+            RadialUIPlugin.AddOnCharacter(Guid + "RevertMini",
                 new MapMenu.ItemArgs
                 {
-                    Title = "Remove Auras",
+                    Title = "Revert Mini",
                     CloseMenuOnActivate = true,
-                    Action = RemoveAura
+                    Action = RevertMini
+                },
+                HasChanged
+            );
+
+            RadialUIPlugin.AddOnCharacter(Guid + "ChangeMini",
+                new MapMenu.ItemArgs
+                {
+                    Title = "Change Mini",
+                    CloseMenuOnActivate = true,
+                    Action = ChangeMini
                 },
                 IsInGmMode
-            );
+                );
         }
 
         public void Request(StatMessaging.Change[] changes)
@@ -105,13 +111,6 @@ namespace ThunderMan.ThunderManIntegration
             }
         }
 
-        private bool isBoardLoaded()
-        {
-            return (BoardSessionManager.HasInstance &&
-                    BoardSessionManager.HasBoardAndIsInNominalState &&
-                    !BoardSessionManager.IsLoading);
-        }
-
         /// <summary>
         /// Looping method run by plugin
         /// </summary>
@@ -121,6 +120,13 @@ namespace ThunderMan.ThunderManIntegration
         }
 
         public void ChangeMini(MapMenuItem mmi, object o)
+        {
+            Debug.Log("Minis Called");
+            if (list == null || list.IsDisposed) list = new AssetsList("Minis");
+            list.Show();
+        }
+
+        public void RevertMini(MapMenuItem mmi, object o)
         {
             Debug.Log("Minis Called");
             if (list == null || list.IsDisposed) list = new AssetsList("Minis");
@@ -143,10 +149,16 @@ namespace ThunderMan.ThunderManIntegration
 
         public static NGuid RadialTargetedMini;
 
-        private bool IsInGmMode(NGuid selected, NGuid targeted)
+        private static bool IsInGmMode(NGuid selected, NGuid targeted)
         {
             RadialTargetedMini = targeted;
             return LocalClient.IsInGmMode;
+        }
+
+        private static bool HasChanged(NGuid selected, NGuid targeted)
+        {
+            RadialTargetedMini = targeted;
+            return false; // LocalClient.IsInGmMode;
         }
 
         public static ParallelQuery<FileInfo> GetAssetPaths(string assetType = "Minis")
