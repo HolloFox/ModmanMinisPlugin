@@ -400,7 +400,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SystemMessageExt\SystemMessageExtensions.cs" />
+    <Compile Include="SystemMessageExt\ComboListBoxPlugin.cs" />
     <Compile Include="ThunderManIntegration\AssetsList.cs">
       <SubType>Form</SubType>
     </Compile>

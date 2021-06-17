@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,7 @@ using LordAshes;
 using Newtonsoft.Json;
 using RadialUI;
 using ThunderMan.Manifests;
+using ThunderMan.SystemMessageExt;
 using UnityEngine;
 
 namespace ThunderMan.ThunderManIntegration
@@ -17,6 +19,7 @@ namespace ThunderMan.ThunderManIntegration
     [BepInDependency(CustomMiniPlugin.Guid)]
     [BepInDependency(StatMessaging.Guid)]
     [BepInDependency(RadialUIPlugin.Guid)]
+    [BepInDependency(ComboListBoxPlugin.Guid)]
     public class ThunderManPlugin: BaseUnityPlugin
     {
         // constants
@@ -112,6 +115,9 @@ namespace ThunderMan.ThunderManIntegration
             }
         }
 
+        private GameObject modified = null;
+        private const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
         /// <summary>
         /// Looping method run by plugin
         /// </summary>
@@ -122,9 +128,13 @@ namespace ThunderMan.ThunderManIntegration
 
         public void ChangeMini(MapMenuItem mmi, object o)
         {
-            Debug.Log("Minis Called");
-            if (list == null || list.IsDisposed) list = new AssetsList("Minis");
-            list.Show();
+            ComboListBoxPlugin.AskForSelectedInputs("Change Mini", "Select a Creature", "Accept", null, new string[]{});
+            /*SystemMessageExtensions.AskForSelectedInputs(
+                "Change Mini","message","accept",null,null
+                );*/
+
+            // if (list == null || list.IsDisposed) list = new AssetsList("Minis");
+            // list.Show();
         }
 
         public void RevertMini(MapMenuItem mmi, object o)
