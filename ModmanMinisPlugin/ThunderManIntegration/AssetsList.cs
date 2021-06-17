@@ -37,6 +37,7 @@ namespace ThunderMan.ThunderManIntegration
             model.Ror2mm = $"ror2mm://v1/install/talespire.thunderstore.io/{author}/{mod_name}/{version}/";
             if (AssetType == "Effects") model.transformName = $"#{model.transformName}";
             StatMessaging.SetInfo(new CreatureGuid(ThunderManPlugin.RadialTargetedMini), ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
+            Close();
         }
 
         public List<LoadAsset> paths = new List<LoadAsset>();
