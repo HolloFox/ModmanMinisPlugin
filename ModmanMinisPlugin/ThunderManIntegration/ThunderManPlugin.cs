@@ -24,7 +24,7 @@ namespace ThunderMan.ThunderManIntegration
     {
         // constants
         public const string Guid = "org.hollofox.plugins.ThunderManPlugin";
-        private const string Version = "1.1.0.0";
+        private const string Version = "1.2.0.0";
         private const string Name = "HolloFoxes' ThunderMan Plug-In";
 
         // Need to remove these and use SystemMessageExtensions
