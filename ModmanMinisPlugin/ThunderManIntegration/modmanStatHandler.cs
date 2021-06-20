@@ -22,7 +22,7 @@ namespace ThunderMan.ThunderManIntegration
             if (Directory.Exists(pluginsFolder + "\\" + folder))
             {
                 
-                handler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+                handler.LoadCustomContent(asset, CustomMiniPlugin.RequestHandler.LoadType.mini ,pluginsFolder + "\\" + data.transformName);
             }
             else
             {
@@ -32,7 +32,7 @@ namespace ThunderMan.ThunderManIntegration
                     () =>
                     {
                         System.Diagnostics.Process.Start(data.Ror2mm).WaitForExit();
-                        handler.LoadCustomContent(asset, pluginsFolder + "\\" + data.transformName);
+                        handler.LoadCustomContent(asset, CustomMiniPlugin.RequestHandler.LoadType.mini,pluginsFolder + "\\" + data.transformName);
                     }, "Don't Download");
             }
         }

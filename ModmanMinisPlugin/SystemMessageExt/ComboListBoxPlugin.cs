@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Reflection;
 using BepInEx;
+using SRF;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 namespace ThunderMan.SystemMessageExt
 {
@@ -42,6 +45,7 @@ namespace ThunderMan.SystemMessageExt
         private bool _first = true;
         private static GameObject _stopInput;
         private static Transform _drop;
+        private static Dropdown _categories;
 
         /// <summary>
         /// Looping method run by plugin
@@ -67,6 +71,29 @@ namespace ThunderMan.SystemMessageExt
                     rect.anchorMin = new Vector2(0.25f, 0.25f);
                     rect.anchorMax = new Vector2(0.3f, 0.75f);
 
+                    // Work on Drop Down
+                    var inputText = _drop.transform.GetChild(3);
+                    
+                    var dropdown = GameObject.Instantiate(inputText.gameObject);
+                    dropdown.name = "TextMeshPro - DropdownField";
+                    dropdown.transform.parent = _drop.transform;
+                    dropdown.transform.localPosition = inputText.transform.localPosition;
+                    dropdown.GetComponent<RectTransform>().offsetMin = new Vector2(10, -130);
+                    dropdown.GetComponent<RectTransform>().offsetMax = new Vector2(-10, -100);
+                    dropdown.transform.DestroyChildren();
+                    _categories = dropdown.AddComponent<Dropdown>();
+
+                    var x = new ScrollView(ScrollViewMode.Vertical);
+                    //x.contentViewport.cont
+
+                    _categories.options.AddRange(new Dropdown.OptionData[]
+                    {
+                        new Dropdown.OptionData("1"),
+                        new Dropdown.OptionData("2"),
+                        new Dropdown.OptionData("3"),
+                    });
+
+                    // Define callbacks for Buttons
                     SetCallbacks();
                 }
                 catch (Exception e)

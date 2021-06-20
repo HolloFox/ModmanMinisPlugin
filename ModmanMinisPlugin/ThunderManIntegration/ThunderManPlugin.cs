@@ -87,7 +87,7 @@ namespace ThunderMan.ThunderManIntegration
                 {
                     Title = "Change Mini",
                     CloseMenuOnActivate = true,
-                    Action = ChangeMini
+                    Action = ToggleMini
                 },
                 IsInGmMode
                 );
@@ -118,23 +118,41 @@ namespace ThunderMan.ThunderManIntegration
         private GameObject modified = null;
         private const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
+        private static bool ShowMenu = false;
+
         /// <summary>
         /// Looping method run by plugin
         /// </summary>
         void Update()
         {
+            if (Input.GetKeyUp(KeyCode.F3))
+            {
+                RadialTargetedMini = LocalClient.SelectedCreatureId.Value;
+                ShowMenu = true;
 
+            }
+            if (ShowMenu == true)
+            {
+                ChangeMini();
+                ShowMenu = false;
+            }
         }
 
-        public void ChangeMini(MapMenuItem mmi, object o)
+        public void ToggleMini(MapMenuItem mmi, object o)
         {
-            ComboListBoxPlugin.AskForSelectedInputs("Change Mini", "Select a Creature", "Accept", null, new string[]{});
+            ShowMenu = true;
+        }
+
+        public void ChangeMini()
+        {
+            // ComboListBoxPlugin.AskForSelectedInputs("Change Mini", "Select a Creature", "Accept", null, new string[]{});
             /*SystemMessageExtensions.AskForSelectedInputs(
                 "Change Mini","message","accept",null,null
                 );*/
 
-            // if (list == null || list.IsDisposed) list = new AssetsList("Minis");
-            // list.Show();
+            if (list == null || list.IsDisposed) list = new AssetsList("Minis");
+            list.Show();
+            list.Focus();
         }
 
         public void RevertMini(MapMenuItem mmi, object o)
