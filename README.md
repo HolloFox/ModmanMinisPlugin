@@ -14,11 +14,11 @@ Form will pop up and you can browse through installed minis and click Load to lo
 Lord Ashes for his dependent mod and the collaboration to get this working.
 
 ## Changelog
-1.2.1: Sprite Method Refactor (prep for sprite)
-1.2.0: Update to use newer CMP.
-1.1.0: Refactored files to use asset.json for manifest. Fixed CMP Dependency. Use Radial Plugin
-1.0.0: Initial release
-0.9.0: Alpha release
+- 1.2.1: Sprite Method Refactor (prep for sprite)
+- 1.2.0: Update to use newer CMP.
+- 1.1.0: Refactored files to use asset.json for manifest. Fixed CMP Dependency. Use Radial Plugin
+- 1.0.0: Initial release
+- 0.9.0: Alpha release
 
 Shoutout to my Patreons on https://www.patreon.com/HolloFox recognising your
 mighty contribution to my caffeine addiction:
