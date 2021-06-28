@@ -24,7 +24,7 @@ namespace ThunderMan.ThunderManIntegration
     {
         // constants
         public const string Guid = "org.hollofox.plugins.ThunderManPlugin";
-        private const string Version = "1.2.0.0";
+        private const string Version = "1.2.1.0";
         private const string Name = "HolloFoxes' ThunderMan Plug-In";
 
         // Need to remove these and use SystemMessageExtensions
@@ -96,9 +96,7 @@ namespace ThunderMan.ThunderManIntegration
         private static Sprite sprite(string FileName)
         {
             var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            Texture2D tex = new Texture2D(32, 32);
-            tex.LoadImage(File.ReadAllBytes(dir + "\\"  + FileName));
-            return Sprite.Create(tex, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f));
+            return RadialSubmenu.GetIconFromFile(dir + "\\" + FileName);
         }
 
         public void Request(StatMessaging.Change[] changes)
