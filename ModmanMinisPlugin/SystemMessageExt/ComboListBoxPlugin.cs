@@ -99,6 +99,7 @@ namespace ThunderMan.SystemMessageExt
                 catch (Exception e)
                 {
                     Debug.Log("Failed to instantiate modified");
+                    Debug.LogError($"Error: {e}");
                 }
 
                 _first = false;

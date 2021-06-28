@@ -113,9 +113,6 @@ namespace ThunderMan.ThunderManIntegration
             }
         }
 
-        private GameObject modified = null;
-        private const BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-
         private static bool ShowMenu = false;
 
         /// <summary>
@@ -129,7 +126,7 @@ namespace ThunderMan.ThunderManIntegration
                 ShowMenu = true;
 
             }
-            if (ShowMenu == true)
+            if (ShowMenu)
             {
                 ChangeMini();
                 ShowMenu = false;

@@ -114,7 +114,6 @@ namespace ThunderMan.ThunderManIntegration
     {
         private static BaseUnityPlugin parentPlugin;
         private static ManualLogSource parentLogger;
-        private static bool serverStarted = false;
         private static Queue<BoardInfo> boardsToLoad = new Queue<BoardInfo>();
         //private static bool movingCreature = false;
         //private static Queue<MoveAction> moveQueue = new Queue<MoveAction>();
