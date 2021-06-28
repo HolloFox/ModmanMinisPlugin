@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Bounce.Unmanaged;
 using LordAshes;
 using Newtonsoft.Json;
+using ThunderMan.Manifests;
 using UnityEngine;
 
-namespace ModmanMinis
+namespace ThunderMan.ThunderManIntegration
 {
     public partial class AssetsList : Form
     {
         private string AssetType;
+        
         public AssetsList(string search)
         {
             AssetType = search;
@@ -31,7 +27,7 @@ namespace ModmanMinis
 
             var modFolder = model.transformName.Substring(0, model.transformName.IndexOf("\\"));
             
-            manifest obj = JsonConvert.DeserializeObject<manifest>(File.ReadAllText(pluginsFolder+"\\" + modFolder + "\\manifest.json"));
+            modManifest obj = JsonConvert.DeserializeObject<modManifest>(File.ReadAllText(pluginsFolder+"\\" + modFolder + "\\manifest.json"));
 
             // Don't bother loading json file until needed
             var author = modFolder.Substring(0,modFolder.IndexOf("-"));
@@ -39,14 +35,9 @@ namespace ModmanMinis
             var version = obj.version_number;
             
             model.Ror2mm = $"ror2mm://v1/install/talespire.thunderstore.io/{author}/{mod_name}/{version}/";
-            /* GET	https://talespire.thunderstore.io/api/experimental/package/{Author}/{PluginName}/ => 
-                latest.version_number
-            */
-            // var message = $"<size=0>{mod_name}/{author}</size>{model.MiniName}";
             if (AssetType == "Effects") model.transformName = $"#{model.transformName}";
-            StatMessaging.SetInfo(LocalClient.SelectedCreatureId, ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
-
-            // CreatureManager.SetCreatureName(LocalClient.SelectedCreatureId, $"Make me a: {message}");
+            StatMessaging.SetInfo(new CreatureGuid(ThunderManPlugin.RadialTargetedMini), ThunderManPlugin.Guid, JsonConvert.SerializeObject(model));
+            Close();
         }
 
         public List<LoadAsset> paths = new List<LoadAsset>();
@@ -57,7 +48,7 @@ namespace ModmanMinis
             var assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             pluginsFolder = Directory.GetParent(assemblyFolder).FullName;
 
-            var bundles = ThunderManPlugin.GetAssetPaths(AssetType);
+            ParallelQuery<FileInfo> bundles = ThunderManPlugin.GetMinis();
 
             Dictionary<string, LoadAsset> assets = new Dictionary<string, LoadAsset>();
 
@@ -76,20 +67,11 @@ namespace ModmanMinis
                 paths.Add(asset);
                 listBox1.Items.Add(path.Name);
             }
-
-            // List<String> paths = assets.Keys.ToList().or;
         }
 
-        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-            var index = listBox1.SelectedIndex;
-            var path = paths[index];
-            if (Directory.Exists(pluginsFolder + "/icon.png"))
-            {
-                var icon = pluginsFolder + "/icon.png";
-                Debug.Log(icon);
-                pictureBox1.ImageLocation = icon;
-            }
+            this.Close();
         }
     }
 }

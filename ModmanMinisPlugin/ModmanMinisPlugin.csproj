@@ -7,7 +7,7 @@
     <ProjectGuid>{B1D07128-5C44-4003-B05F-D35A122E975A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ModmanMinis</RootNamespace>
+    <RootNamespace>ThunderMan</RootNamespace>
     <AssemblyName>ThunderManPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -79,6 +79,10 @@
     <Reference Include="Bouncyrock.TaleSpire.Runtime">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\TaleSpire\TaleSpire_Data\Managed\Bouncyrock.TaleSpire.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="CustomMiniPlugin, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\TaleSpire\profiles\CMPDev\BepInEx\plugins\LordAshes-CustomMiniPlugin\CustomMiniPlugin.dll</HintPath>
+    </Reference>
     <Reference Include="HarmonyXInterop">
       <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\TaleSpire\profiles\Default\BepInEx\core\HarmonyXInterop.dll</HintPath>
     </Reference>
@@ -109,6 +113,9 @@
     <Reference Include="PhotonUtil, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\TaleSpire\profiles\Default\BepInEx\plugins\HolloFox_TS-Photon_Universal_Plugin_PUP\PhotonUtil.dll</HintPath>
+    </Reference>
+    <Reference Include="RadialUI">
+      <HintPath>..\..\..\..\AppData\Roaming\r2modmanPlus-local\TaleSpire\profiles\CMPDev\BepInEx\plugins\HolloFox_TS-RadialUIPlugin\RadialUI.dll</HintPath>
     </Reference>
     <Reference Include="ShapesRuntime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -393,24 +400,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomMinisPlugin\CharWordReader.cs" />
-    <Compile Include="CustomMinisPlugin\CustomMiniPlugin.cs" />
-    <Compile Include="CustomMinisPlugin\MTLLoader.cs" />
-    <Compile Include="CustomMinisPlugin\OBJLoader.cs" />
-    <Compile Include="CustomMinisPlugin\OBJLoaderHelper.cs" />
-    <Compile Include="CustomMinisPlugin\OBJObjectBuilder.cs" />
-    <Compile Include="CustomMinisPlugin\RequestHandler.cs" />
-    <Compile Include="CustomMinisPlugin\ShaderDetector.cs" />
-    <Compile Include="CustomMinisPlugin\StateDetection.cs" />
-    <Compile Include="CustomMinisPlugin\StringExtensions.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\BinaryExtensions.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\BMPLoader.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ColorExtensions.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\DDSLoader.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ImageLoader.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ImageLoaderHelper.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\ImageUtils.cs" />
-    <Compile Include="CustomMinisPlugin\TextureLoader\TGALoader.cs" />
+    <Compile Include="SystemMessageExt\ComboListBoxPlugin.cs" />
     <Compile Include="ThunderManIntegration\AssetsList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -419,7 +409,8 @@
     </Compile>
     <Compile Include="ThunderManIntegration\Extensions.cs" />
     <Compile Include="ThunderManIntegration\LoadAsset.cs" />
-    <Compile Include="ThunderManIntegration\manifest.cs" />
+    <Compile Include="Manifests\assetManifest.cs" />
+    <Compile Include="Manifests\modManifest.cs" />
     <Compile Include="ThunderManIntegration\ModdingUtil.cs" />
     <Compile Include="ThunderManIntegration\ThunderManPlugin.cs" />
     <Compile Include="ThunderManIntegration\modmanStatHandler.cs" />

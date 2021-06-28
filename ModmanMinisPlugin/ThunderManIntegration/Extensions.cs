@@ -3,7 +3,7 @@ using System.Linq;
 using BepInEx.Configuration;
 using UnityEngine;
 
-namespace ModmanMinis
+namespace ThunderMan.ThunderManIntegration
 {
     public static class Extensions
     {
