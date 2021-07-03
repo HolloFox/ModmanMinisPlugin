@@ -10,16 +10,18 @@ You can install them via clicking on "Install with Mod Manager" or using the r2m
 Right click on mini in GM mode and use radial menu to click on "Change Mini".
 Form will pop up and you can browse through installed minis and click Load to load the mini.
 
+## Shoutouts
+Lord Ashes for his dependent mod and the collaboration to get this working.
+
 ## Changelog
+- 1.2.2: Fix error being logged
 - 1.2.1: Sprite Method Refactor (prep for sprite)
 - 1.2.0: Update to use newer CMP.
 - 1.1.0: Refactored files to use asset.json for manifest. Fixed CMP Dependency. Use Radial Plugin
 - 1.0.0: Initial release
 - 0.9.0: Alpha release
 
-## Shoutouts
-Lord Ashes for his dependent mod and the collaboration to get this working.
-
 Shoutout to my Patreons on https://www.patreon.com/HolloFox recognising your
 mighty contribution to my caffeine addiction:
 - John Fuller
+- Tales Tavern - MadWizard

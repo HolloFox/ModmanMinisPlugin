@@ -19,12 +19,12 @@ namespace ThunderMan.ThunderManIntegration
     [BepInDependency(CustomMiniPlugin.Guid)]
     [BepInDependency(StatMessaging.Guid)]
     [BepInDependency(RadialUIPlugin.Guid)]
-    [BepInDependency(ComboListBoxPlugin.Guid)]
+    // [BepInDependency(ComboListBoxPlugin.Guid)]
     public class ThunderManPlugin: BaseUnityPlugin
     {
         // constants
         public const string Guid = "org.hollofox.plugins.ThunderManPlugin";
-        private const string Version = "1.2.1.0";
+        private const string Version = "1.2.2.0";
         private const string Name = "HolloFoxes' ThunderMan Plug-In";
 
         // Need to remove these and use SystemMessageExtensions
